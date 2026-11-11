@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#6f1020">
+  <title>meal-management</title>
+
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --card: #ffffff;
+      --text: #171717;
+      --sub: #777;
+      --accent: #741528;
+      --accent2: #111;
+      --border: #ded9d2;
+      --soft: #efe8e1;
+    }
+
+    body[data-theme="white"] {
+      --bg: #ffffff;
+      --card: #ffffff;
+      --text: #111;
+      --sub: #666;
+      --accent: #111;
+      --accent2: #555;
+      --border: #d8d8d8;
+      --soft: #f2f2f2;
+    }
+
+    body[data-theme="navy"] {
+      --bg: #f2f4f7;
+      --card: #ffffff;
+      --text: #101722;
+      --sub: #657080;
+      --accent: #18283f;
+      --accent2: #000;
+      --border: #d4d9e0;
+      --soft: #e5e9ee;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        -apple-system, BlinkMacSystemFont,
+        "Hiragino Sans", "Yu Gothic",
+        "Noto Sans JP", sans-serif;
+      padding-bottom: 90px;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      max-width: 600px;
+      margin: auto;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 22px 18px 12px;
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .brand {
+      font-family: Georgia, serif;
+      font-size: 22px;
+      letter-spacing: .5px;
+      font-weight: bold;
+    }
+
+    .brand span {
+      color: var(--accent);
+    }
+
+    .page {
+      padding: 8px 16px 20px;
+    }
+
+    .date-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 12px 0 18px;
+    }
+
+    .date-title {
+      font-weight: bold;
+      text-align: center;
+      flex: 1;
+      font-size: 16px;
+    }
+
+    .small-btn {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      padding: 9px 11px;
+      border-radius: 4px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 16px;
+      margin-bottom: 14px;
+      border-radius: 3px;
+    }
+
+    .card-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 13px;
+    }
+
+    .card-title h2 {
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .section-label {
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: 1px;
+      font-weight: bold;
+    }
+
+    .meal {
+      border-top: 1px solid var(--border);
+      padding: 13px 0;
+    }
+
+    .meal:first-of-type {
+      border-top: none;
+    }
+
+    .meal-name {
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    .food-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 0;
+      font-size: 14px;
+    }
+
+    .food-info {
+      min-width: 0;
+    }
+
+    .food-name {
+      font-weight: 600;
+    }
+
+    .food-meta {
+      color: var(--sub);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .delete {
+      border: none;
+      background: none;
+      color: var(--accent);
+      font-size: 16px;
+    }
+
+    .empty {
+      color: var(--sub);
+      font-size: 13px;
+      padding: 3px 0;
+    }
+
+    .nutrition-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .nutrition {
+      border: 1px solid var(--border);
+      padding: 11px;
+      background: var(--soft);
+      border-radius: 2px;
+    }
+
+    .nutrition-label {
+      color: var(--sub);
+      font-size: 11px;
+    }
+
+    .nutrition-value {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    .nutrition-value small {
+      font-size: 11px;
+      font-weight: normal;
+    }
+
+    .main-button {
+      width: 100%;
+      border: none;
+      background: var(--accent);
+      color: white;
+      padding: 14px;
+      font-weight: bold;
+      border-radius: 3px;
+      margin: 5px 0;
+    }
+
+    .outline-button {
+      width: 100%;
+      border: 1px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      padding: 13px;
+      border-radius: 3px;
+      margin: 5px 0;
+      font-weight: bold;
+    }
+
+    .activity-row {
+      border-top: 1px solid var(--border);
+      padding: 10px 0;
+      font-size: 14px;
+    }
+
+    .steps-number {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 50;
+      align-items: flex-end;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      max-height: 92vh;
+      overflow-y: auto;
+      background: var(--bg);
+      padding: 22px 18px 30px;
+      border-radius: 18px 18px 0 0;
+    }
+
+    .modal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .close-btn {
+      border: none;
+      background: none;
+      font-size: 24px;
+      color: var(--text);
+    }
+
+    .form-group {
+      margin-bottom: 13px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      padding: 12px;
+      border-radius: 3px;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .notice {
+      background: var(--soft);
+      border-left: 3px solid var(--accent);
+      padding: 12px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      z-index: 30;
+    }
+
+    .nav-inner {
+      max-width: 600px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    .nav button {
+      border: none;
+      background: transparent;
+      color: var(--sub);
+      padding: 12px 3px 10px;
+      font-size: 11px;
+    }
+
+    .nav button.active {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .nav-icon {
+      display: block;
+      font-size: 17px;
+      margin-bottom: 3px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .record-options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .record-option {
+      text-align: left;
+      padding: 16px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 3px;
+    }
+
+    .record-option strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .record-option span {
+      font-size: 12px;
+      color: var(--sub);
+    }
+
+    .chart {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      height: 180px;
+      padding-top: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .bar-wrap {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .bar {
+      width: 100%;
+      max-width: 35px;
+      background: var(--accent);
+      min-height: 2px;
+    }
+
+    .bar-label {
+      font-size: 10px;
+      color: var(--sub);
+    }
+
+    .theme-buttons {
+      display: grid;
+      gap: 8px;
+    }
+
+    .theme-btn {
+      text-align: left;
+      padding: 13px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+    }
+
+    .theme-btn.selected {
+      border: 2px solid var(--accent);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    #photoPreview {
+      max-width: 100%;
+      max-height: 250px;
+      display: block;
+      margin: 10px auto;
+      border: 1px solid var(--border);
+    }
+
+    .search-result-placeholder {
+      padding: 20px;
+      text-align: center;
+      color: var(--sub);
+    }
+  </style>
+</head>
+
+<body data-theme="red">
+
+<div class="app">
+
+  <header>
+    <div class="brand">meal<span>—</span>management</div>
+  </header>
+
+  <main class="page">
+
+    <!-- HOME -->
+    <section id="homeScreen" class="screen active">
+
+      <div class="date-bar">
+        <button class="small-btn" onclick="changeDate(-1)">＜ 前の日</button>
+        <div class="date-title" id="currentDate"></div>
+        <button class="small-btn" onclick="changeDate(1)">次の日 ＞</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>食事</h2>
+          <span class="section-label">DAILY LOG</span>
+        </div>
+
+        <div id="mealsList"></div>
+
+        <button class="main-button" onclick="showFoodForm()">
+          ＋ 食事を記録
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>今日の栄養</h2>
+          <span class="section-label">NUTRITION</span>
+        </div>
+
+        <div class="nutrition-grid" id="nutritionGrid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>活動</h2>
+          <span class="section-label">ACTIVITY</span>
+        </div>
+
+        <div>
+          <div class="section-label">STEPS</div>
+          <div class="steps-number" id="stepsDisplay">未入力</div>
+        </div>
+
+        <button class="outline-button" onclick="showStepsForm()">
+          歩数を記録
+        </button>
+
+        <div id="activitiesList"></div>
+
+        <button class="outline-button" onclick="showExerciseForm()">
+          運動を記録
+        </button>
+      </div>
+
+    </section>
+
+    <!-- RECORD -->
+    <section id="recordScreen" class="screen">
+      <div class="card">
+        <div class="card-title">
+          <h2>記録</h2>
+          <span class="section-label">ADD</span>
+        </div>
+
+        <div class="record-options">
+
+          <button class="record-option" onclick="showFoodForm()">
+            <strong>食事を手入力</strong>
+            <span>食品名・量・栄養素を入力して記録</span>
+          </button>
+
+          <button class="record-option" onclick="showPhotoRecord()">
+            <strong>写真から記録</strong>
+            <span>写真を選択して確認画面へ進む</span>
+          </button>
+
+          <button class="record-option" onclick="showExerciseForm()">
+            <strong>運動を記録</strong>
+            <span>運動時間などを記録</span>
+          </button>
+
+          <button class="record-option" onclick="showStepsForm()">
+            <strong>歩数を記録</strong>
+            <span>今日の歩数を手入力</span>
+          </button>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SEARCH -->
+    <section id="searchScreen" class="screen">
+      <div class="card">
+        <div class="card-title">
+          <h2>食品検索</h2>
+          <span class="section-label">SEARCH</span>
+        </div>
+
+        <input
+          id="foodSearch"
+          placeholder="商品名・店名・メニュー名を入力"
+        >
+
+        <button class="main-button" onclick="searchFood()">
+          検索
+        </button>
+
+        <div id="searchResult"></div>
+      </div>
+    </section>
+
+    <!-- ANALYSIS -->
+    <section id="analysisScreen" class="screen">
+      <div class="card">
+        <div class="card-title">
+          <h2>分析</h2>
+          <span class="section-label">WEEKLY</span>
+        </div>
+
+        <p class="empty">直近7日間の食事記録数</p>
+        <div class="chart" id="foodChart"></div>
+      </div>
+
+      <div class="card">
+        <p class="empty">直近7日間の歩数</p>
+        <div class="chart" id="stepsChart"></div>
+      </div>
+
+      <div class="card">
+        <p class="empty">直近7日間の運動時間（分）</p>
+        <div class="chart" id="exerciseChart"></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settingsScreen" class="screen">
+
+      <div class="card">
+        <div class="card-title">
+          <h2>テーマ</h2>
+          <span class="section-label">THEME</span>
+        </div>
+
+        <div class="theme-buttons">
+          <button class="theme-btn" onclick="setTheme('red')">
+            Red & Black
+          </button>
+
+          <button class="theme-btn" onclick="setTheme('white')">
+            White & Black
+          </button>
+
+          <button class="theme-btn" onclick="setTheme('navy')">
+            Navy & Black
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>Health連携</h2>
+          <span class="section-label">HEALTH</span>
+        </div>
+
+        <div class="notice">
+          このバージョンでは、Health Connectとの自動連携は未対応です。
+          実際に連携できていない状態で「連携済み」と表示することはありません。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h2>バックアップ</h2>
+          <span class="section-label">DATA</span>
+        </div>
+
+        <button class="outline-button" onclick="exportData()">
+          JSONをエクスポート
+        </button>
+
+        <input
+          type="file"
+          id="importFile"
+          accept=".json"
+          class="hidden"
+          onchange="importData(event)"
+        >
+
+        <button
+          class="outline-button"
+          onclick="document.getElementById('importFile').click()"
+        >
+          JSONをインポート
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="notice">
+          データは現在、この端末・ブラウザーのlocalStorageに保存されています。
+          ブラウザーのデータ削除や端末変更の前に、JSONバックアップを保存してください。
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <button class="active" onclick="showScreen('home', this)">
+      <span class="nav-icon">⌂</span>ホーム
+    </button>
+
+    <button onclick="showScreen('record', this)">
+      <span class="nav-icon">＋</span>記録
+    </button>
+
+    <button onclick="showScreen('search', this)">
+      <span class="nav-icon">⌕</span>検索
+    </button>
+
+    <button onclick="showScreen('analysis', this)">
+      <span class="nav-icon">▥</span>分析
+    </button>
+
+    <button onclick="showScreen('settings', this)">
+      <span class="nav-icon">⚙</span>設定
+    </button>
+  </div>
+</nav>
+
+
+<!-- FOOD MODAL -->
+<div class="modal" id="foodModal">
+  <div class="modal-content">
+
+    <div class="modal-top">
+      <h2>食事を記録</h2>
+      <button class="close-btn" onclick="closeModal('foodModal')">×</button>
+    </div>
+
+    <form id="foodForm">
+
+      <div class="form-group">
+        <label>食品名 *</label>
+        <input id="foodName" required placeholder="例：白米">
+      </div>
+
+      <div class="two-col">
+        <div class="form-group">
+          <label>食事</label>
+          <select id="mealType">
+            <option value="朝食">朝食</option>
+            <option value="昼食">昼食</option>
+            <option value="夕食">夕食</option>
+            <option value="間食">間食</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>食べた量</label>
+          <input id="amount" placeholder="例：1人前、150g">
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="form-group">
+          <label>エネルギー kcal</label>
+          <input id="kcal" type="number" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>たんぱく質 g</label>
+          <input id="protein" type="number" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>脂質 g</label>
+          <input id="fat" type="number" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>炭水化物 g</label>
+          <input id="carbs" type="number" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>糖質 g</label>
+          <input id="sugar" type="number" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>食物繊維 g</label>
+          <input id="fiber" type="number" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>食塩相当量 g</label>
+          <input id="salt" type="number" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>カルシウム mg</label>
+          <input id="calcium" type="number" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>鉄 mg</label>
+          <input id="iron" type="number" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label>ビタミンC mg</label>
+          <input id="vitaminC" type="number" step="0.1">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>メモ</label>
+        <textarea id="foodMemo"></textarea>
+      </div>
+
+      <button class="main-button" type="submit">保存する</button>
+
+    </form>
+  </div>
+</div>
+
+
+<!-- PHOTO MODAL -->
+<div class="modal" id="photoModal">
+  <div class="modal-content">
+
+    <div class="modal-top">
+      <h2>写真から記録</h2>
+      <button class="close-btn" onclick="closeModal('photoModal')">×</button>
+    </div>
+
+    <div class="notice">
+      現在、AI分析機能は未設定です。<br>
+      写真は確認画面で表示できますが、写真の内容を自動判定したり、
+      存在しない栄養情報を作成したりすることはありません。
+    </div>
+
+    <input
+      type="file"
+      accept="image/*"
+      capture="environment"
+      onchange="previewPhoto(event)"
+    >
+
+    <img id="photoPreview" class="hidden">
+
+    <button class="main-button" onclick="photoToFoodForm()">
+      手入力で食事情報を追加する
+    </button>
+
+  </div>
+</div>
+
+
+<!-- EXERCISE MODAL -->
+<div class="modal" id="exerciseModal">
+  <div class="modal-content">
+
+    <div class="modal-top">
+      <h2>運動を記録</h2>
+      <button class="close-btn" onclick="closeModal('exerciseModal')">×</button>
+    </div>
+
+    <form id="exerciseForm">
+
+      <div class="form-group">
+        <label>運動名 *</label>
+        <input id="exerciseName" required placeholder="例：ウォーキング">
+      </div>
+
+      <div class="two-col">
+        <div class="form-group">
+          <label>運動時間（分）</label>
+          <input id="exerciseMinutes" type="number">
+        </div>
+
+        <div class="form-group">
+          <label>距離（任意）</label>
+          <input id="exerciseDistance" placeholder="例：2.5km">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>強度（任意）</label>
+        <select id="exerciseIntensity">
+          <option value="">未入力</option>
+          <option>軽い</option>
+          <option>普通</option>
+          <option>強い</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>推定消費エネルギー（任意）</label>
+        <input id="exerciseKcal" type="number" placeholder="推定値">
+      </div>
+
+      <div class="form-group">
+        <label>メモ</label>
+        <textarea id="exerciseMemo"></textarea>
+      </div>
+
+      <button class="main-button" type="submit">保存する</button>
+
+    </form>
+  </div>
+</div>
+
+
+<!-- STEPS MODAL -->
+<div class="modal" id="stepsModal">
+  <div class="modal-content">
+
+    <div class="modal-top">
+      <h2>歩数を記録</h2>
+      <button class="close-btn" onclick="closeModal('stepsModal')">×</button>
+    </div>
+
+    <div class="notice">
+      現在は手入力で記録します。
+    </div>
+
+    <div class="form-group">
+      <label>歩数</label>
+      <input id="stepsInput" type="number" placeholder="例：7500">
+    </div>
+
+    <button class="main-button" onclick="saveSteps()">
+      保存する
+    </button>
+
+  </div>
+</div>
+
+
+<script>
+
+const STORAGE_KEY = "mealManagementData";
+
+let selectedDate = new Date();
+selectedDate.setHours(0,0,0,0);
+
+let data = {
+  days: {},
+  theme: "red"
+};
+
+function loadData() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+
+  if (saved) {
+    try {
+      data = JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  document.body.dataset.theme = data.theme || "red";
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function dateKey(date = selectedDate) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+
+  return `${y}-${m}-${d}`;
+}
+
+function ensureDay() {
+  const key = dateKey();
+
+  if (!data.days[key]) {
+    data.days[key] = {
+      foods: [],
+      exercises: [],
+      steps: null
+    };
+  }
+
+  return data.days[key];
+}
+
+function formatDate(date) {
+  return `${date.getFullYear()}年${date.getMonth()+1}月${date.getDate()}日`;
+}
+
+function changeDate(days) {
+  selectedDate.setDate(selectedDate.getDate() + days);
+  renderAll();
+}
+
+function showScreen(name, button) {
+
+  document.querySelectorAll(".screen").forEach(el => {
+    el.classList.remove("active");
+  });
+
+  document.getElementById(name + "Screen").classList.add("active");
+
+  document.querySelectorAll(".nav button").forEach(el => {
+    el.classList.remove("active");
+  });
+
+  button.classList.add("active");
+
+  if (name === "analysis") {
+    renderAnalysis();
+  }
+}
+
+function renderAll() {
+  document.getElementById("currentDate").textContent =
+    formatDate(selectedDate);
+
+  renderMeals();
+  renderNutrition();
+  renderActivities();
+}
+
+function renderMeals() {
+
+  const day = ensureDay();
+  const container = document.getElementById("mealsList");
+
+  const types = ["朝食", "昼食", "夕食", "間食"];
+
+  container.innerHTML = "";
+
+  types.forEach(type => {
+
+    const foods = day.foods.filter(food => food.meal === type);
+
+    const div = document.createElement("div");
+    div.className = "meal";
+
+    div.innerHTML = `
+      <div class="meal-name">${type}</div>
+      <div class="meal-items"></div>
+    `;
+
+    const list = div.querySelector(".meal-items");
+
+    if (foods.length === 0) {
+
+      list.innerHTML = `<div class="empty">記録なし</div>`;
+
+    } else {
+
+      foods.forEach(food => {
+
+        const foodDiv = document.createElement("div");
+        foodDiv.className = "food-item";
+
+        const kcalText =
+          food.kcal !== null && food.kcal !== ""
+            ? `${food.kcal} kcal`
+            : "栄養情報 未入力";
+
+        foodDiv.innerHTML = `
+          <div class="food-info">
+            <div class="food-name">${escapeHtml(food.name)}</div>
+            <div class="food-meta">
+              ${escapeHtml(food.amount || "")}
+              ${food.amount ? " ・ " : ""}
+              ${kcalText}
+            </div>
+          </div>
+
+          <button class="delete" onclick="deleteFood('${food.id}')">
+            ×
+          </button>
+        `;
+
+        list.appendChild(foodDiv);
+      });
+    }
+
+    container.appendChild(div);
+  });
+}
+
+const nutritionFields = [
+  ["エネルギー", "kcal", "kcal"],
+  ["たんぱく質", "protein", "g"],
+  ["脂質", "fat", "g"],
+  ["炭水化物", "carbs", "g"],
+  ["糖質", "sugar", "g"],
+  ["食物繊維", "fiber", "g"],
+  ["食塩相当量", "salt", "g"],
+  ["カルシウム", "calcium", "mg"],
+  ["鉄", "iron", "mg"],
+  ["ビタミンC", "vitaminC", "mg"]
+];
+
+function renderNutrition() {
+
+  const day = ensureDay();
+  const container = document.getElementById("nutritionGrid");
+
+  container.innerHTML = "";
+
+  nutritionFields.forEach(([label, field, unit]) => {
+
+    let total = 0;
+    let hasValue = false;
+
+    day.foods.forEach(food => {
+
+      if (
+        food[field] !== null &&
+        food[field] !== "" &&
+        food[field] !== undefined
+      ) {
+        total += Number(food[field]);
+        hasValue = true;
+      }
+    });
+
+    const div = document.createElement("div");
+    div.className = "nutrition";
+
+    div.innerHTML = `
+      <div class="nutrition-label">${label}</div>
+      <div class="nutrition-value">
+        ${hasValue ? round(total) : "未入力"}
+        ${hasValue ? `<small>${unit}</small>` : ""}
+      </div>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+function renderActivities() {
+
+  const day = ensureDay();
+
+  document.getElementById("stepsDisplay").textContent =
+    day.steps !== null && day.steps !== undefined
+      ? `${Number(day.steps).toLocaleString()} 歩`
+      : "未入力";
+
+  const container = document.getElementById("activitiesList");
+
+  container.innerHTML = "";
+
+  if (day.exercises.length > 0) {
+
+    day.exercises.forEach(exercise => {
+
+      const div = document.createElement("div");
+      div.className = "activity-row";
+
+      div.innerHTML = `
+        <strong>${escapeHtml(exercise.name)}</strong>
+        <br>
+        <span class="empty">
+          ${exercise.minutes ? exercise.minutes + "分" : ""}
+          ${exercise.kcal ? " ・ 推定 " + exercise.kcal + " kcal" : ""}
+        </span>
+        <button
+          class="delete"
+          style="float:right"
+          onclick="deleteExercise('${exercise.id}')"
+        >×</button>
+      `;
+
+      container.appendChild(div);
+    });
+  }
+}
+
+function showFoodForm() {
+  closeAllModals();
+  document.getElementById("foodModal").classList.add("show");
+}
+
+function showPhotoRecord() {
+  closeAllModals();
+  document.getElementById("photoModal").classList.add("show");
+}
+
+function showExerciseForm() {
+  closeAllModals();
+  document.getElementById("exerciseModal").classList.add("show");
+}
+
+function showStepsForm() {
+  const day = ensureDay();
+
+  document.getElementById("stepsInput").value =
+    day.steps || "";
+
+  closeAllModals();
+  document.getElementById("stepsModal").classList.add("show");
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove("show");
+}
+
+function closeAllModals() {
+  document.querySelectorAll(".modal").forEach(el => {
+    el.classList.remove("show");
+  });
+}
+
+document.getElementById("foodForm").addEventListener("submit", function(e) {
+
+  e.preventDefault();
+
+  const day = ensureDay();
+
+  const getValue = id => {
+    const value = document.getElementById(id).value;
+    return value === "" ? null : value;
+  };
+
+  day.foods.push({
+    id: crypto.randomUUID ?
+      crypto.randomUUID() :
+      Date.now().toString(),
+
+    name: document.getElementById("foodName").value,
+    meal: document.getElementById("mealType").value,
+    amount: document.getElementById("amount").value,
+
+    kcal: getValue("kcal"),
+    protein: getValue("protein"),
+    fat: getValue("fat"),
+    carbs: getValue("carbs"),
+    sugar: getValue("sugar"),
+    fiber: getValue("fiber"),
+    salt: getValue("salt"),
+    calcium: getValue("calcium"),
+    iron: getValue("iron"),
+    vitaminC: getValue("vitaminC"),
+
+    memo: document.getElementById("foodMemo").value
+  });
+
+  saveData();
+  this.reset();
+
+  closeModal("foodModal");
+  renderAll();
+});
+
+function deleteFood(id) {
+
+  const day = ensureDay();
+
+  day.foods = day.foods.filter(food => food.id !== id);
+
+  saveData();
+  renderAll();
+}
+
+document.getElementById("exerciseForm").addEventListener("submit", function(e) {
+
+  e.preventDefault();
+
+  const day = ensureDay();
+
+  day.exercises.push({
+    id: crypto.randomUUID ?
+      crypto.randomUUID() :
+      Date.now().toString(),
+
+    name: document.getElementById("exerciseName").value,
+    minutes: document.getElementById("exerciseMinutes").value,
+    distance: document.getElementById("exerciseDistance").value,
+    intensity: document.getElementById("exerciseIntensity").value,
+    kcal: document.getElementById("exerciseKcal").value,
+    memo: document.getElementById("exerciseMemo").value
+  });
+
+  saveData();
+  this.reset();
+
+  closeModal("exerciseModal");
+  renderAll();
+});
+
+function deleteExercise(id) {
+
+  const day = ensureDay();
+
+  day.exercises = day.exercises.filter(
+    exercise => exercise.id !== id
+  );
+
+  saveData();
+  renderAll();
+}
+
+function saveSteps() {
+
+  const day = ensureDay();
+
+  const value = document.getElementById("stepsInput").value;
+
+  day.steps = value === "" ? null : Number(value);
+
+  saveData();
+  closeModal("stepsModal");
+  renderAll();
+}
+
+function previewPhoto(event) {
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  const img = document.getElementById("photoPreview");
+
+  img.src = URL.createObjectURL(file);
+  img.classList.remove("hidden");
+}
+
+function photoToFoodForm() {
+
+  closeModal("photoModal");
+  showFoodForm();
+}
+
+function searchFood() {
+
+  const result = document.getElementById("searchResult");
+
+  result.innerHTML = `
+    <div class="notice">
+      食品データベースに接続されていません。<br><br>
+      現在は実際の検索結果を捏造せず、手入力で追加してください。
+    </div>
+
+    <button class="outline-button" onclick="showFoodForm()">
+      手入力で追加
+    </button>
+  `;
+}
+
+function setTheme(theme) {
+
+  data.theme = theme;
+
+  document.body.dataset.theme = theme;
+
+  saveData();
+
+  document.querySelectorAll(".theme-btn").forEach(btn => {
+    btn.classList.remove("selected");
+  });
+}
+
+function exportData() {
+
+  const blob = new Blob(
+    [JSON.stringify(data, null, 2)],
+    {type: "application/json"}
+  );
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = "meal-management-backup.json";
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+
+    try {
+
+      const imported = JSON.parse(e.target.result);
+
+      if (!imported.days) {
+        throw new Error();
+      }
+
+      data = imported;
+
+      saveData();
+
+      document.body.dataset.theme =
+        data.theme || "red";
+
+      renderAll();
+
+      alert("データをインポートしました。");
+
+    } catch {
+
+      alert("正しいバックアップファイルではありません。");
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+function renderAnalysis() {
+
+  const dates = [];
+
+  for (let i = 6; i >= 0; i--) {
+
+    const date = new Date(selectedDate);
+
+    date.setDate(date.getDate() - i);
+
+    dates.push(date);
+  }
+
+  const foodValues = dates.map(date => {
+
+    const day = data.days[dateKey(date)];
+
+    return day ? day.foods.length : 0;
+  });
+
+  const stepValues = dates.map(date => {
+
+    const day = data.days[dateKey(date)];
+
+    return day && day.steps ? Number(day.steps) : 0;
+  });
+
+  const exerciseValues = dates.map(date => {
+
+    const day = data.days[dateKey(date)];
+
+    if (!day) return 0;
+
+    return day.exercises.reduce(
+      (sum, exercise) =>
+        sum + Number(exercise.minutes || 0),
+      0
+    );
+  });
+
+  drawChart("foodChart", dates, foodValues);
+  drawChart("stepsChart", dates, stepValues);
+  drawChart("exerciseChart", dates, exerciseValues);
+}
+
+function drawChart(id, dates, values) {
+
+  const container = document.getElementById(id);
+
+  container.innerHTML = "";
+
+  const max = Math.max(...values, 1);
+
+  values.forEach((value, index) => {
+
+    const wrap = document.createElement("div");
+
+    wrap.className = "bar-wrap";
+
+    const bar = document.createElement("div");
+
+    bar.className = "bar";
+
+    bar.style.height =
+      `${Math.max((value / max) * 100, value > 0 ? 4 : 1)}%`;
+
+    const label = document.createElement("div");
+
+    label.className = "bar-label";
+
+    label.textContent =
+      `${dates[index].getMonth()+1}/${dates[index].getDate()}`;
+
+    wrap.appendChild(bar);
+    wrap.appendChild(label);
+
+    container.appendChild(wrap);
+  });
+}
+
+function round(value) {
+  return Math.round(value * 10) / 10;
+}
+
+function escapeHtml(text) {
+
+  const div = document.createElement("div");
+
+  div.textContent = text;
+
+  return div.innerHTML;
+}
+
+loadData();
+renderAll();
+
+</script>
+
+</body>
+</html>
