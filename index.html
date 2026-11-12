@@ -556,6 +556,17 @@
   display: block;
   margin: 15px 0;
 }
+    .pfc-balance {
+  grid-column: 1 / -1;
+}
+
+.pfc-values {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 8px;
+  font-weight: bold;
+  font-size: 18px;
+}
   </style>
 </head>
 
@@ -1259,6 +1270,42 @@ function renderNutrition() {
 
     container.appendChild(div);
   });
+    // PFCバランスを計算
+  let protein = 0;
+  let fat = 0;
+  let carbs = 0;
+
+  day.foods.forEach(food => {
+    protein += Number(food.protein) || 0;
+    fat += Number(food.fat) || 0;
+    carbs += Number(food.carbs) || 0;
+  });
+
+  // PFCをカロリーに換算
+  const proteinKcal = protein * 4;
+  const fatKcal = fat * 9;
+  const carbsKcal = carbs * 4;
+  const totalPFCKcal = proteinKcal + fatKcal + carbsKcal;
+
+  if (totalPFCKcal > 0) {
+    const pPercent = Math.round((proteinKcal / totalPFCKcal) * 100);
+    const fPercent = Math.round((fatKcal / totalPFCKcal) * 100);
+    const cPercent = Math.round((carbsKcal / totalPFCKcal) * 100);
+
+    const pfcDiv = document.createElement("div");
+    pfcDiv.className = "nutrition pfc-balance";
+
+    pfcDiv.innerHTML = `
+      <div class="nutrition-label">PFCバランス</div>
+      <div class="pfc-values">
+        <span>P ${pPercent}%</span>
+        <span>F ${fPercent}%</span>
+        <span>C ${cPercent}%</span>
+      </div>
+    `;
+
+    container.appendChild(pfcDiv);
+  }
 }
 
 function renderActivities() {
