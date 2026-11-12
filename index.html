@@ -551,7 +551,40 @@
   padding: 12px 0;
   border-bottom: 1px solid #eee;
 }
- 
+ .weight-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 180px;
+  padding: 20px 10px 10px;
+  overflow-x: auto;
+}
+
+.chart-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 42px;
+  height: 100%;
+}
+
+.chart-value {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.chart-bar {
+  width: 28px;
+  border-radius: 8px 8px 0 0;
+  transition: height 0.3s;
+}
+
+.chart-date {
+  font-size: 10px;
+  margin-top: 5px;
+  white-space: nowrap;
+}
   </style>
 </head>
 
@@ -661,6 +694,7 @@
     今日の体重を記録
   </button>
 
+  <div id="weightChart"></div>
   <div class="weight-history" id="weightHistory"></div>
 </div>
     </section>
@@ -1676,6 +1710,33 @@ function saveWeightRecord() {
   }
 
   const history = getWeightHistory();
+  const chartArea = document.getElementById("weightChart");
+
+if (chartArea) {
+  if (history.length === 0) {
+    chartArea.innerHTML = "<p>グラフに表示する記録がありません。</p>";
+  } else {
+    const maxWeight = Math.max(...history.map(item => Number(item.weight)));
+    const minWeight = Math.min(...history.map(item => Number(item.weight)));
+    const range = maxWeight - minWeight || 1;
+
+    chartArea.innerHTML = `
+      <h3>体重の推移</h3>
+      <div class="weight-chart">
+        ${history.slice(-7).map(item => {
+          const height = ((Number(item.weight) - minWeight) / range) * 80 + 20;
+          return `
+            <div class="chart-bar-wrapper">
+              <div class="chart-value">${Number(item.weight).toFixed(1)}</div>
+              <div class="chart-bar" style="height: ${height}px"></div>
+              <div class="chart-date">${item.date}</div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+}
   const today = new Date().toLocaleDateString("ja-JP");
 
   const existing = history.findIndex(item => item.date === today);
