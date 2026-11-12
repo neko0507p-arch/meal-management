@@ -612,6 +612,19 @@
       </div>
 
       <div class="card">
+  <div class="card-title">
+    <h2>栄養素の比較</h2>
+    <span class="section-label">REFERENCE</span>
+  </div>
+
+  <p class="section-label">
+    成人女性向けの参考値との比較
+  </p>
+
+  <canvas id="nutritionChart"></canvas>
+</div>
+      
+      <div class="card">
         <div class="card-title">
           <h2>活動</h2>
           <span class="section-label">ACTIVITY</span>
@@ -1305,6 +1318,109 @@ function renderNutrition() {
     `;
 
     container.appendChild(pfcDiv);
+  }
+    // 栄養素の参考値との比較グラフ
+  const nutritionChart = document.getElementById("nutritionChart");
+
+  if (nutritionChart) {
+    const ctx = nutritionChart.getContext("2d");
+
+    const targets = [
+      { label: "たんぱく質", field: "protein", target: 50 },
+      { label: "食物繊維", field: "fiber", target: 18 },
+      { label: "カルシウム", field: "calcium", target: 650 },
+      { label: "鉄", field: "iron", target: 10 },
+      { label: "ビタミンC", field: "vitaminC", target: 100 }
+    ];
+
+    const data = targets.map(item => {
+      let actual = 0;
+
+      day.foods.forEach(food => {
+        actual += Number(food[item.field]) || 0;
+      });
+
+      return {
+        ...item,
+        actual,
+        percent: Math.round((actual / item.target) * 100)
+      };
+    });
+
+    const width = nutritionChart.clientWidth || 320;
+    const height = 300;
+    const scale = 2;
+
+    nutritionChart.width = width * scale;
+    nutritionChart.height = height * scale;
+    nutritionChart.style.height = height + "px";
+
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+
+    const paddingLeft = 35;
+    const paddingRight = 15;
+    const paddingTop = 35;
+    const paddingBottom = 55;
+
+    const graphWidth = width - paddingLeft - paddingRight;
+    const graphHeight = height - paddingTop - paddingBottom;
+
+    const maxPercent = Math.max(
+      100,
+      ...data.map(item => item.percent)
+    );
+
+    // 100%の目安線
+    const targetY =
+      paddingTop +
+      ((maxPercent - 100) / maxPercent) * graphHeight;
+
+    ctx.beginPath();
+    ctx.setLineDash([5, 5]);
+    ctx.moveTo(paddingLeft, targetY);
+    ctx.lineTo(width - paddingRight, targetY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 棒グラフ
+    const barSpace = graphWidth / data.length;
+    const barWidth = Math.min(35, barSpace * 0.6);
+
+    data.forEach((item, index) => {
+      const barHeight =
+        (item.percent / maxPercent) * graphHeight;
+
+      const x =
+        paddingLeft +
+        index * barSpace +
+        (barSpace - barWidth) / 2;
+
+      const y =
+        paddingTop +
+        graphHeight -
+        barHeight;
+
+      ctx.fillRect(x, y, barWidth, barHeight);
+
+      ctx.font = "11px sans-serif";
+
+      ctx.fillText(
+        item.percent + "%",
+        x,
+        y - 8
+      );
+
+      ctx.fillText(
+        item.label,
+        x - 8,
+        height - 20
+      );
+    });
+
+    // 100%表示
+    ctx.font = "11px sans-serif";
+    ctx.fillText("100%", 2, targetY + 4);
   }
 }
 
