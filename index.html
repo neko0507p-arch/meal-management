@@ -1802,7 +1802,8 @@ if (chartCanvas && history.length > 0) {
 
   localStorage.setItem(WEIGHT_SETTINGS_KEY, JSON.stringify(settings));
   localStorage.setItem(WEIGHT_HISTORY_KEY, JSON.stringify(history));
-
+  
+  renderWeightSettings(); 
   renderWeightData();
   alert("今日の体重を記録しました！");
 }
