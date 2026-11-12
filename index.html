@@ -1685,31 +1685,74 @@ const chartCanvas = document.getElementById("weightChart");
 
 if (chartCanvas && history.length > 0) {
   const ctx = chartCanvas.getContext("2d");
-
   const data = history.slice(-7);
   const weights = data.map(item => Number(item.weight));
 
   const displayWidth = chartCanvas.clientWidth || 320;
-  const displayHeight = 220;
+  const displayHeight = 260;
+  const scale = 2;
 
-  chartCanvas.width = displayWidth * 2;
-  chartCanvas.height = displayHeight * 2;
+  chartCanvas.width = displayWidth * scale;
+  chartCanvas.height = displayHeight * scale;
   chartCanvas.style.height = displayHeight + "px";
 
-  ctx.scale(2, 2);
+  ctx.setTransform(scale, 0, 0, scale, 0, 0);
 
-  const padding = 30;
-  const maxWeight = Math.max(...weights);
-  const minWeight = Math.min(...weights);
-  const range = maxWeight - minWeight || 1;
+  const paddingLeft = 48;
+  const paddingRight = 20;
+  const paddingTop = 30;
+  const paddingBottom = 45;
+
+  const graphWidth = displayWidth - paddingLeft - paddingRight;
+  const graphHeight = displayHeight - paddingTop - paddingBottom;
+
+  let maxWeight = Math.max(...weights);
+  let minWeight = Math.min(...weights);
+
+  if (maxWeight === minWeight) {
+    maxWeight += 1;
+    minWeight -= 1;
+  }
+
+  const extra = (maxWeight - minWeight) * 0.15;
+  maxWeight += extra;
+  minWeight -= extra;
+
+  const range = maxWeight - minWeight;
+
+  const getX = index =>
+    paddingLeft + (index * graphWidth) / Math.max(data.length - 1, 1);
+
+  const getY = weight =>
+    paddingTop + ((maxWeight - weight) / range) * graphHeight;
 
   ctx.clearRect(0, 0, displayWidth, displayHeight);
 
+  // 横線と縦の目盛り
+  ctx.font = "11px sans-serif";
+
+  for (let i = 0; i <= 4; i++) {
+    const y = paddingTop + (graphHeight / 4) * i;
+    const value = maxWeight - (range / 4) * i;
+
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, y);
+    ctx.lineTo(displayWidth - paddingRight, y);
+    ctx.stroke();
+
+    ctx.fillText(
+      value.toFixed(1) + " kg",
+      2,
+      y + 4
+    );
+  }
+
+  // 折れ線
   ctx.beginPath();
 
   weights.forEach((weight, index) => {
-    const x = padding + (index * (displayWidth - padding * 2)) / Math.max(weights.length - 1, 1);
-    const y = padding + ((maxWeight - weight) / range) * (displayHeight - padding * 2);
+    const x = getX(index);
+    const y = getY(weight);
 
     if (index === 0) {
       ctx.moveTo(x, y);
@@ -1720,6 +1763,28 @@ if (chartCanvas && history.length > 0) {
 
   ctx.lineWidth = 3;
   ctx.stroke();
+
+  // 点・体重・日付
+  data.forEach((item, index) => {
+    const x = getX(index);
+    const y = getY(Number(item.weight));
+
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillText(
+      Number(item.weight).toFixed(1),
+      x - 10,
+      y - 10
+    );
+
+    ctx.fillText(
+      item.date,
+      x - 18,
+      displayHeight - 15
+    );
+  });
 }
   const today = new Date().toLocaleDateString("ja-JP");
 
