@@ -617,12 +617,20 @@
     <!-- HOME -->
     <section id="homeScreen" class="screen active">
 
-      <div class="date-bar">
-        <button class="small-btn" onclick="changeDate(-1)">＜ 前の日</button>
-        <div class="date-title" id="currentDate"></div>
-        <button class="small-btn" onclick="changeDate(1)">次の日 ＞</button>
-      </div>
+  <div class="date-bar">
+  <button class="small-btn" onclick="changeDate(-1)">＜ 前の日</button>
 
+  <div class="date-title">
+    <input
+      type="date"
+      id="datePicker"
+      onchange="selectDate(this.value)"
+    >
+  </div>
+
+  <button class="small-btn" onclick="changeDate(1)">次の日 ＞</button>
+</div>
+      
       <div class="card">
         <div class="card-title">
           <h2>食事</h2>
