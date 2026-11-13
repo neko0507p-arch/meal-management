@@ -567,6 +567,40 @@
   font-weight: bold;
   font-size: 18px;
 }
+    .progress-item {
+  margin-bottom: 18px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 14px;
+  margin-bottom: 7px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: #e9e9e9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #222;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.progress-percent {
+  text-align: right;
+  font-size: 12px;
+  margin-top: 4px;
+  color: #666;
+}
+    
   </style>
 </head>
 
@@ -610,6 +644,15 @@
 
         <div class="nutrition-grid" id="nutritionGrid"></div>
       </div>
+      
+<div class="card">
+  <div class="card-title">
+    <h2>今日の達成状況</h2>
+    <span class="section-label">PROGRESS</span>
+  </div>
+
+  <div id="progressList"></div>
+</div>
 
       <div class="card">
   <div class="card-title">
@@ -1422,6 +1465,56 @@ function renderNutrition() {
     ctx.font = "11px sans-serif";
     ctx.fillText("100%", 2, targetY + 4);
   }
+    // 今日の達成状況
+  const progressList = document.getElementById("progressList");
+
+  if (progressList) {
+    const targets = [
+      { label: "エネルギー", field: "kcal", target: 2000, unit: "kcal" },
+      { label: "たんぱく質", field: "protein", target: 50, unit: "g" },
+      { label: "食物繊維", field: "fiber", target: 18, unit: "g" },
+      { label: "カルシウム", field: "calcium", target: 650, unit: "mg" },
+      { label: "鉄", field: "iron", target: 10, unit: "mg" },
+      { label: "ビタミンC", field: "vitaminC", target: 100, unit: "mg" }
+    ];
+
+    progressList.innerHTML = "";
+
+    targets.forEach(item => {
+      let actual = 0;
+
+      day.foods.forEach(food => {
+        actual += Number(food[item.field]) || 0;
+      });
+
+      const percent = Math.round((actual / item.target) * 100);
+      const displayPercent = Math.min(percent, 100);
+
+      const progressItem = document.createElement("div");
+      progressItem.className = "progress-item";
+
+      progressItem.innerHTML = `
+        <div class="progress-header">
+          <span>${item.label}</span>
+          <span>${round(actual)}${item.unit} / ${item.target}${item.unit}</span>
+        </div>
+
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            style="width: ${displayPercent}%"
+          ></div>
+        </div>
+
+        <div class="progress-percent">
+          ${percent}%
+        </div>
+      `;
+
+      progressList.appendChild(progressItem);
+    });
+  }
+  
 }
 
 function renderActivities() {
