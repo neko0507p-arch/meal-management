@@ -1472,19 +1472,27 @@ function renderNutrition() {
 
       ctx.font = "9px sans-serif";
 
-      const shortLabels = [
-        "たんぱく質",
-        "食物繊維",
-        "カルシウム",
-        "鉄",
-        "ビタミンC"
-      ];
+     const shortLabels = [
+  ["たんぱく", "質"],
+  ["食物", "繊維"],
+  ["カルシ", "ウム"],
+  ["鉄", ""],
+  ["ビタミン", "C"]
+];
 
       ctx.fillText(
-        shortLabels[index],
-        x + barWidth / 2,
-        height - 20
-      );
+  shortLabels[index][0],
+  x + barWidth / 2,
+  height - 30
+);
+
+if (shortLabels[index][1]) {
+  ctx.fillText(
+    shortLabels[index][1],
+    x + barWidth / 2,
+    height - 17
+  );
+}
     });
 
     ctx.font = "11px sans-serif";
