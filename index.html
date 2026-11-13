@@ -1094,6 +1094,10 @@
         <label>推定消費エネルギー（任意）</label>
         <input id="exerciseKcal" type="number" placeholder="推定値">
       </div>
+      function selectDate(dateValue) {
+  selectedDate = new Date(dateValue + "T00:00:00");
+  renderAll();
+}
 
       <div class="form-group">
         <label>メモ</label>
