@@ -2128,18 +2128,23 @@ if (chartCanvas && history.length > 0) {
 
 function renderWeightData() {
   const settings = getWeightSettings();
+  const ageInput = document.getElementById("ageInput");
+  const sexInput = document.getElementById("sexInput");
   const heightInput = document.getElementById("heightInput");
   const currentInput = document.getElementById("currentWeightInput");
   const targetInput = document.getElementById("targetWeightInput");
 
   if (!heightInput) return;
 
-  heightInput.value = settings.height || "";
-  currentInput.value = settings.current || "";
-  targetInput.value = settings.target || "";
+  ageInput.value = settings.age || "";
+sexInput.value = settings.sex || "";
+heightInput.value = settings.height || "";
+currentInput.value = settings.current || "";
+targetInput.value = settings.target || "";
 
   const bmiDisplay = document.getElementById("bmiDisplay");
-  const differenceDisplay = document.getElementById("weightDifference");
+const differenceDisplay = document.getElementById("weightDifference");
+const bmrDisplay = document.getElementById("bmrDisplay");
 
   if (settings.height && settings.current) {
     const heightM = settings.height / 100;
@@ -2155,6 +2160,30 @@ function renderWeightData() {
     differenceDisplay.textContent = sign + difference.toFixed(1) + " kg";
   } else {
     differenceDisplay.textContent = "--";
+  }
+    // 基礎代謝（参考値）
+  if (settings.age && settings.sex && settings.height && settings.current) {
+    let bmr;
+
+    if (settings.sex === "female") {
+      bmr =
+        10 * settings.current +
+        6.25 * settings.height -
+        5 * settings.age -
+        161;
+    } else if (settings.sex === "male") {
+      bmr =
+        10 * settings.current +
+        6.25 * settings.height -
+        5 * settings.age +
+        5;
+    }
+
+    if (bmr) {
+      bmrDisplay.textContent = Math.round(bmr) + " kcal";
+    }
+  } else {
+    bmrDisplay.textContent = "-- kcal";
   }
 
   const history = getWeightHistory();
